@@ -97,5 +97,5 @@ JOIN classification c ON i.classification_id = c.classification_id;
 
 -- 12. Task 1 - Generic image update using REPLACE()
 UPDATE inventory
-SET inv_image = REPLACE(inv_image, '/images/', '/images/updated/'),
-    inv_thumbnail = REPLACE(inv_thumbnail, '/images/', '/images/updated/');
+SET inv_image = REPLACE(inv_image, '/images/', '/images/vehicles/'),
+    inv_thumbnail = REPLACE(inv_thumbnail, '/images/', '/images/vehicles/');
