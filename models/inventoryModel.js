@@ -10,16 +10,31 @@ async function getAllInventory() {
   }
 }
 
-// Get vehicles by classification ID
+// Get vehicles by classification name
+async function getInventoryByClassification(classification_name) {
+  try {
+    const data = await pool.query(
+      `SELECT * FROM inventory i 
+       JOIN classification c ON i.classification_id = c.classification_id 
+       WHERE c.classification_name = $1`,
+      [classification_name]
+    );
+    return data.rows;
+  } catch (error) {
+    console.error("getInventoryByClassification error:", error);
+    throw error;
+  }
+}
+
 async function getInventoryByClassificationId(classification_id) {
   try {
     const data = await pool.query(
-      `SELECT * FROM public.inventory WHERE classification_id = $1`,
+      `SELECT * FROM inventory WHERE classification_id = $1`,
       [classification_id]
     );
     return data.rows;
   } catch (error) {
-    console.error("getInventoryByClassificationId error:", error);
+    throw error;
   }
 }
 
@@ -36,9 +51,9 @@ async function getVehicleById(inv_id) {
   }
 }
 
-// Export the functions
 module.exports = {
   getAllInventory,
   getInventoryByClassificationId,
-  getVehicleById, 
+  getInventoryByClassification, // ✅ Add this
+  getVehicleById,
 };
