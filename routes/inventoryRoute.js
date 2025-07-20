@@ -1,11 +1,11 @@
-const express = require("express");
-const router = new express.Router();
-const invController = require("../controllers/invController");
+const express = require('express');
+const router = express.Router();
+const invController = require('../controllers/invController'); 
 
-// Route to build inventory by classification ID
-router.get("/type/:classification_id", invController.buildByClassificationId);
+// Route: View all inventory by classification 
+router.get('/type/:classification', invController.buildByClassification);
 
-// Route to build vehicle detail view by inventory ID
-router.get("/detail/:inv_id", invController.buildByInventoryId);
+// Route: View inventory details
+router.get('/detail/:inv_id', invController.buildById);
 
 module.exports = router;

@@ -1,23 +1,44 @@
-const pool = require("../database/");
+const pool = require('../database/connection'); // Make sure pool is required
 
-async function getVehicleById(inv_id) {
+// Get all vehicles
+async function getAllInventory() {
   try {
-    const result = await pool.query(
-      `SELECT i.*, c.classification_name
-       FROM inventory AS i
-       JOIN classification AS c
-       ON i.classification_id = c.classification_id
-       WHERE inv_id = $1`,
-      [inv_id]
-    );
-    return result.rows[0];
+    const data = await pool.query(`SELECT * FROM public.inventory`);
+    return data.rows;
   } catch (error) {
-    throw error;
+    console.error("getAllInventory error:", error);
   }
 }
 
+// Get vehicles by classification ID
+async function getInventoryByClassificationId(classification_id) {
+  try {
+    const data = await pool.query(
+      `SELECT * FROM public.inventory WHERE classification_id = $1`,
+      [classification_id]
+    );
+    return data.rows;
+  } catch (error) {
+    console.error("getInventoryByClassificationId error:", error);
+  }
+}
+
+// Get vehicle by ID
+async function getVehicleById(inv_id) {
+  try {
+    const data = await pool.query(
+      `SELECT * FROM public.inventory WHERE inv_id = $1`,
+      [inv_id]
+    );
+    return data.rows[0];
+  } catch (error) {
+    console.error("getVehicleById error:", error);
+  }
+}
+
+// Export the functions
 module.exports = {
-  getAllClassifications,
+  getAllInventory,
   getInventoryByClassificationId,
-  getInventoryById, 
+  getVehicleById, 
 };
