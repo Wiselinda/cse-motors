@@ -1,46 +1,199 @@
-const pool = require('../database/connection');
 
-const util = {};
+const invModel = require("../models/inventory-model")
 
-// 🔧 Render nav
-util.getNav = async function () {
-  try {
-    const data = await pool.query("SELECT * FROM classification ORDER BY classification_name");
-    let nav = `<ul class="navigation"><li><a href="/" title="Home page">Home</a></li>`;
-    data.rows.forEach(row => {
-      nav += `<li><a href="/inventory/type/${row.classification_name}" title="See our ${row.classification_name} inventory">${row.classification_name}</a></li>`;
-    });
-    nav += `</ul>`;
-    return nav;
-  } catch (error) {
-    console.error("getNav error:", error);
+
+const Util = {}
+
+
+
+
+Util.getNav = async function (req, res, next) {
+
+
+  let data = await invModel.getClassifications()
+
+
+  let list = "<ul>"
+
+
+  list += '<li><a href="/" title="Home page">Home</a></li>'
+
+
+  data.rows.forEach((row) => {
+
+
+    list += "<li>"
+
+
+    list +=
+
+
+      '<a href="/inv/type/' +
+
+
+      row.classification_id +
+
+
+      '" title="See our inventory of ' +
+
+
+      row.classification_name +
+
+
+      ' vehicles">' +
+
+
+      row.classification_name +
+
+
+      "</a>"
+
+
+    list += "</li>"
+
+
+  })
+
+
+  list += "</ul>"
+
+
+  return list
+
+
+}
+
+
+
+
+
+Util.buildClassificationGrid = async function(data){
+
+
+    let grid
+
+
+    if(data.length > 0){
+
+
+      grid = '<ul id="inv-display">'
+
+
+      data.forEach(vehicle => { 
+
+
+        grid += '<li>'
+
+
+        grid +=  '<a href="../../inv/detail/'+ vehicle.inv_id 
+
+
+        + '" title="View ' + vehicle.inv_make + ' '+ vehicle.inv_model 
+
+
+        + 'details"><img src="' + vehicle.inv_thumbnail 
+
+
+        +'" alt="Image of '+ vehicle.inv_make + ' ' + vehicle.inv_model 
+
+
+        +' on CSE Motors" /></a>'
+
+
+        grid += '<div class="namePrice">'
+
+
+        grid += '<hr />'
+
+
+        grid += '<h2>'
+
+
+        grid += '<a href="../../inv/detail/' + vehicle.inv_id +'" title="View ' 
+
+
+        + vehicle.inv_make + ' ' + vehicle.inv_model + ' details">' 
+
+
+        + vehicle.inv_make + ' ' + vehicle.inv_model + '</a>'
+
+
+        grid += '</h2>'
+
+
+        grid += '<span>$' 
+
+
+        + new Intl.NumberFormat('en-US').format(vehicle.inv_price) + '</span>'
+
+
+        grid += '</div>'
+
+
+        grid += '</li>'
+
+
+      })
+
+
+      grid += '</ul>'
+
+
+    } else { 
+
+
+      grid += '<p class="notice">Sorry, no matching vehicles could be found.</p>'
+
+
+    }
+
+
+    return grid
+
+
   }
-};
 
-// 🔧 Build inventory grid
-util.buildInventoryGrid = async function (inventoryData) {
-  if (!inventoryData || inventoryData.length === 0) return "<p>No vehicles found.</p>";
 
-  let grid = '<ul id="inv-display">';
-  inventoryData.forEach(vehicle => {
-    grid += `
-      <li>
-        <a href="/inventory/detail/${vehicle.inv_id}" title="View ${vehicle.inv_make} ${vehicle.inv_model} details">
-          <img src="${vehicle.inv_thumbnail}" alt="Image of ${vehicle.inv_make} ${vehicle.inv_model}">
-        </a>
-        <div class="namePrice">
-          <h2>
-            <a href="/inventory/detail/${vehicle.inv_id}" title="View ${vehicle.inv_make} ${vehicle.inv_model} details">
-              ${vehicle.inv_make} ${vehicle.inv_model}
-            </a>
-          </h2>
-          <span>$${vehicle.inv_price.toLocaleString()}</span>
-        </div>
-      </li>
-    `;
-  });
-  grid += '</ul>';
-  return grid;
-};
+Util.buildSingleVehicleDisplay = async (vehicle) => {
+  let svd = '<section id="vehicle-display">'
+  svd += "<div>"
+  svd += '<section class="imagePrice">'
+  svd +=
+    "<img src='" +
+    vehicle.inv_image +
+    "' alt='Image of " +
+    vehicle.inv_make +
+    " " +
+    vehicle.inv_model +
+    " on cse motors' id='mainImage'>"
+  svd += "</section>"
+  svd += '<section class="vehicleDetail">'
+  svd += "<h3> " + vehicle.inv_make + " " + vehicle.inv_model + " Details</h3>"
+  svd += '<ul id="vehicle-details">'
+  svd +=
+    "<li><h4>Price: $" +
+    new Intl.NumberFormat("en-US").format(vehicle.inv_price) +
+    "</h4></li>"
+  svd += "<li><h4>Description:</h4> " + vehicle.inv_description + "</li>"
+  svd += "<li><h4>Color:</h4> " + vehicle.inv_color + "</li>"
+  svd +=
+    "<li><h4>Miles:</h4> " +
+    new Intl.NumberFormat("en-US").format(vehicle.inv_miles) +
+    "</li>"
+  svd += "</ul>"
+  svd += "</section>"
+  svd += "</div>"
+  svd += "</section>"
+  return svd
+}
 
-module.exports = util;
+
+
+
+Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
+
+
+
+
+
+module.exports = Util

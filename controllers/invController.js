@@ -1,78 +1,41 @@
-const utilities = require("../utilities");
-const invModel = require("../models/inventoryModel");
+const invModel = require("../models/inventory-model")
+const utilities = require("../utilities/")
 
-async function buildByClassification(req, res, next) {
-  const classification = req.params.classification;
-  try {
-    const data = await invModel.getInventoryByClassification(classification);
-    const grid = await utilities.buildInventoryGrid(data);
-    const nav = await utilities.getNav();
-    res.render("./inventory/classification", {
-      title: classification + " Vehicles",
-      nav,
-      grid,
-    });
-  } catch (error) {
-    console.error("Error in buildByClassification:", error);
-    next(error);
-  }
-}
+const invCont = {}
 
-async function buildById(req, res) {
-  const invId = parseInt(req.params.inv_id);
-  const data = await invModel.getVehicleById(invId);
-  if (!data) {
-    return res.status(404).send("Vehicle not found");
-  }
 
-  const nav = await utilities.getNav();
-  res.render("./inventory/vehicle-detail", {
-    title: `${data.inv_make} ${data.inv_model}`,
+invCont.buildByClassificationId = async function (req, res, next) {
+  const classification_id = req.params.classificationId
+  const data = await invModel.getInventoryByClassificationId(classification_id)
+  const grid = await utilities.buildClassificationGrid(data)
+  let nav = await utilities.getNav()
+  const className = data[0].classification_name
+  res.render("./inventory/classification", {
+    title: className + " vehicles",
     nav,
-    vehicle: data,
-  });
+    grid,
+  })
 }
 
-// ✅ New Function: List of Classifications
-async function buildClassificationList(req, res, next) {
-  try {
-    const nav = await utilities.getNav();
-    res.render("./inventory/classification-list", {
-      title: "Vehicle Classifications",
-      nav,
-    });
-  } catch (error) {
-    console.error("Error in buildClassificationList:", error);
-    next(error);
-  }
+
+invCont.buildDetail = async function (req, res, next) {
+  const invId = req.params.id
+  let vehicle = await invModel.getInventoryById(invId)
+  const htmlData = await utilities.buildSingleVehicleDisplay(vehicle)
+  let nav = await utilities.getNav()
+  const vehicleTitle =
+    vehicle.inv_year + " " + vehicle.inv_make + " " + vehicle.inv_model
+  res.render("./inventory/detail", {
+    title: vehicleTitle,
+    nav,
+    message: null,
+    htmlData,
+  })
 }
 
-// ✅ Show Vehicle Details by Inventory ID
-async function buildInventory(req, res, next) {
-  const invId = parseInt(req.params.inv_id);
-  try {
-    const data = await invModel.getVehicleById(invId);
-
-    if (!data) {
-      res.status(404).send("Vehicle not found");
-      return;
-    }
-
-    const nav = await utilities.getNav();
-    res.render("./inventory/vehicle-detail", {
-      title: `${data.inv_make} ${data.inv_model}`,
-      nav,
-      vehicle: data,
-    });
-  } catch (error) {
-    console.error("Error in buildInventory:", error);
-    next(error);
-  }
+invCont.throwError = async function (req, res) {
+  throw new Error("I am an intentional error")
 }
 
-module.exports = {
-  buildClassificationList,
-  buildByClassification,
-  buildInventory,
-  buildById,
-};
+
+module.exports = invCont

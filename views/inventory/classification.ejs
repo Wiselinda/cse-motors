@@ -1,16 +1,10 @@
-<%- include('../partials/header') %>
-<%- include('../partials/nav') %>
+<%# Unit 3, Build Classification View activity %>
+<% if (title) { %>
+<h1><%= title %> </h1>
+<% } else {
+  res.redirect('/')
+} %>
 
-<main>
-  <h1><%= title %></h1>
+<%# messages() %>
 
-  <% if (grid && grid.length > 0) { %>
-    <div class="inventory-grid">
-      <%- grid %>
-    </div>
-  <% } else { %>
-    <p>No vehicles found in this category.</p>
-  <% } %>
-</main>
-
-<%- include('../partials/footer') %>
+<%- grid %>

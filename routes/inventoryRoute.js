@@ -1,11 +1,20 @@
-const express = require('express');
-const router = express.Router();
-const invController = require('../controllers/invController'); 
+ 
+const express = require("express")
+const router = new express.Router() 
+const invController = require("../controllers/invController")
+const utilities = require("../utilities")
 
-// Route: View all inventory by classification 
-router.get('/type/:classification', invController.buildByClassification);
+router.get("/type/:classificationId", invController.buildByClassificationId);
 
-// Route: View inventory details
-router.get('/detail/:inv_id', invController.buildById);
+
+router.get("/detail/:id", 
+utilities.handleErrors(invController.buildDetail))
+
+
+router.get(
+  "/broken",
+  utilities.handleErrors(invController.throwError)
+)
+
 
 module.exports = router;
