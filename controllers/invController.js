@@ -3,7 +3,9 @@ const utilities = require("../utilities/")
 
 const invCont = {}
 
-
+/* *********
+ *  Build inventory by classification view
+ * ********** */
 invCont.buildByClassificationId = async function (req, res, next) {
   const classification_id = req.params.classificationId
   const data = await invModel.getInventoryByClassificationId(classification_id)
@@ -17,7 +19,10 @@ invCont.buildByClassificationId = async function (req, res, next) {
   })
 }
 
-
+/* *********
+ *  Build vehicle detail view
+ *  Assignment 3, Task 1
+ * ********** */
 invCont.buildDetail = async function (req, res, next) {
   const invId = req.params.id
   let vehicle = await invModel.getInventoryById(invId)
@@ -33,6 +38,10 @@ invCont.buildDetail = async function (req, res, next) {
   })
 }
 
+/* **************
+ *  Process intentional error
+ *  Assignment 3, Task 3
+ * ************ */
 invCont.throwError = async function (req, res) {
   throw new Error("I am an intentional error")
 }
