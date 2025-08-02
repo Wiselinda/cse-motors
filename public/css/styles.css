@@ -34,6 +34,23 @@ body {
   font-size: 1.5rem;
 }
 
+#top-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+header>img {
+  max-width: 40%;
+}
+
+header a {
+  text-decoration: none;
+  color: var(--primary-text);
+  display: inline-block;
+  padding: 2vh 0;
+}
+
 .account-link {
   float: right;
   color: #fff;

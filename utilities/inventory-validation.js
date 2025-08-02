@@ -1,9 +1,15 @@
-
+/* ***********************************
+ * Created in Unit 4
+ * Modified in Unit 5
+ *********************************** */
 const utilities = require(".")
 const { body, validationResult } = require("express-validator")
 const validate = {}
 
-
+/*  **********************************
+ *  Classification Data Validation Rule
+ *  Assignment 4, Task 2
+ * ********************************* */
 validate.classificationRule = () => {
   return [
     // name is required and must be string
@@ -13,8 +19,12 @@ validate.classificationRule = () => {
       .isAlpha()
       .withMessage("Provide a correct classification name."),
   ]
-}
+}   
 
+/* ******************************
+ * Check and return error or continue to insert classification
+ *  Assignment 4, Task 2
+ * ***************************** */
 validate.checkClassificationData = async (req, res, next) => {
   const { classification_name } = req.body
   let errors = []
@@ -32,6 +42,10 @@ validate.checkClassificationData = async (req, res, next) => {
   next()
 }
 
+/*  **********************************
+ *  New Vehicle Data Validation Rules
+ *  Assignment 4, Task 3
+ * ********************************* */
 validate.newInventoryRules = () => {
   return [
     body("classification_id")
@@ -111,7 +125,10 @@ validate.newInventoryRules = () => {
   ]
 }
 
-
+/* ******************************
+ *  Check data and return errors or continue to new vehicle
+ *  Assignment 4, Task 3
+ * ***************************** */
 validate.checkInventoryData = async (req, res, next) => {
   const {
     inv_make,
@@ -152,6 +169,10 @@ validate.checkInventoryData = async (req, res, next) => {
   next()
 }
 
+/* ******************************
+ *  Check update data and return errors or continue to edit view
+ *  Unit 5, Update Step 2 activity
+ * ***************************** */
 validate.checkUpdateData = async (req, res, next) => {
   const {
     inv_make,

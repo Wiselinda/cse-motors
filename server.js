@@ -48,19 +48,16 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
 
-// Express Messages Middleware
-app.use(require('connect-flash')())
-app.use(function(req, res, next){
-  res.locals.messages = require('express-messages')(req, res)
-  next()
-})
 
 // Unit 4, Process Registration Activity
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
-// Unit 5 Authentication cookie use
+// Unit 5, Login activity
 app.use(cookieParser())
+// Unit 5, Login Process activity
+app.use(utilities.checkJWTToken)
+
 
 /* ***********************
  * View Engine And Templates
