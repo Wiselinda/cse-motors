@@ -1,4 +1,5 @@
 const invModel = require("../models/inventory-model")
+const reviewModel = require("../models/review-model")
 const utilities = require("../utilities/")
 const invCont = {}
 
@@ -28,23 +29,41 @@ invCont.buildByClassificationId = async function (req, res, next) {
     })
 }
 
-/* ***************************
- *  Build vehicle detail view
- *  Assignment 3, Task 1
- * ************************** */
 invCont.buildDetail = async function (req, res, next) {
-  const invId = req.params.id
-  let vehicle = await invModel.getInventoryById(invId)
-  const htmlData = await utilities.buildSingleVehicleDisplay(vehicle)
-  let nav = await utilities.getNav()
-  const vehicleTitle =
-    vehicle.inv_year + " " + vehicle.inv_make + " " + vehicle.inv_model
-  res.render("./inventory/detail", {
-    title: vehicleTitle,
-    nav,
-    message: null,
-    htmlData,
-  })
+  try {
+    const invId = parseInt(req.params.id)
+    const vehicle = await invModel.getInventoryById(invId)
+
+    if (!vehicle) {
+      req.flash("message warning", "Vehicle not found.")
+      return res.redirect("/inv/")
+    }
+
+    const htmlData = await utilities.buildSingleVehicleDisplay(vehicle)
+    const nav = await utilities.getNav()
+
+    // Get reviews for this vehicle
+    const reviews = await reviewModel.getReviewsByInvId(invId)
+
+    // ✅ Pass login and account data into the template
+    const loggedin = req.session.loggedin || false
+    const account_id = req.session.account_id || null
+
+    const vehicleTitle = `${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}`
+    res.render("./inventory/detail", {
+      title: vehicleTitle,
+      nav,
+      message: null,
+      htmlData,
+      vehicle,
+      reviews,
+      loggedin,
+      account_id,
+    })
+  } catch (error) {
+    console.error("Error building vehicle detail:", error)
+    next(error)
+  }
 }
 
 /* ****************************************

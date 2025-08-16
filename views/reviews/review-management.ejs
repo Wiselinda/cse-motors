@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+
+<h1>Manage My Reviews</h1>
+
+<% if (reviews.length > 0) { %>
+  <table>
+    <thead>
+      <tr>
+        <th>Vehicle</th>
+        <th>Review</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% reviews.forEach(review => { %>
+        <tr>
+          <td><%= review.make %> <%= review.model %> (<%= review.year %>)</td>
+          <td><%= review.review_text %></td>
+          <td><%= review.review_date.toDateString() %></td>
+          <td>
+            <a href="/reviews/edit/<%= review.review_id %>">Edit</a> |
+            <a href="/reviews/delete/<%= review.review_id %>">Delete</a>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } else { %>
+  <p>You haven't written any reviews yet.</p>
+<% } %>
+
+<%- include('../partials/footer') %>

@@ -183,8 +183,13 @@ async function processUpdate(req, res, next) {
       expiresIn: 3600 * 1000,
     })
     res.cookie("jwt", accessToken, { httpOnly: true, maxAge: 3600 * 1000 })
+    // 🔹 Store session variables for EJS rendering
+  req.session.loggedin = true
+  req.session.account_id = accountData.account_id
+
     return res.redirect("/account/")
-  } else {
+  }
+   else {
     req.flash("message warning", "Sorry, the update failed.")
     return res.redirect(`/account/update/${account_id}`)
   }

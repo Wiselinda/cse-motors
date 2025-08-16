@@ -1,0 +1,25 @@
+<%- include("../partials/header", { title }) %>
+
+<h1><%= title %></h1>
+
+<form action="/reviews/add" method="post">
+  <input type="hidden" name="inv_id" value="<%= inv_id %>">
+  <input type="hidden" name="account_id" value="<%= account_id %>">
+
+  <label for="review_text">Review:</label>
+  <textarea name="review_text" id="review_text" required><%= review_text %></textarea>
+
+  <label for="rating">Rating:</label>
+  <select name="rating" id="rating" required>
+    <option value="">--Select--</option>
+    <% for (let i = 1; i <= 5; i++) { %>
+      <option value="<%= i %>" <%= rating == i ? "selected" : "" %>><%= i %></option>
+    <% } %>
+  </select>
+
+  <button type="submit">Submit Review</button>
+</form>
+
+<a href="/inv/detail/<%= inv_id %>">Cancel</a>
+
+<%- include("../partials/footer") %>
